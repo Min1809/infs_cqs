@@ -19,16 +19,16 @@
                     </div>
 
                     <!-- Scorecard Header Banner -->
-                    <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-light rounded border">
+                    <div class="d-flex justify-content-between align-items-center cqs-header-banner">
                         <div>
-                            <h4 class="mb-0 fw-bold text-primary">Client Qualification Scorecard</h4>
+                            <h4 class="mb-0 fw-bold cqs-title">Client Qualification Scorecard</h4>
                             <small class="text-muted">FRM-SAL-01 | Version 1.0 | Linked to SOP-SAL-01 and SOP-SAL-10</small>
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <div class="text-end">
                                 <div class="text-muted small">Score &amp; Status</div>
                                 <div class="fw-bold fs-5">
-                                    <span invisible="not cqs_score_completed" class="text-dark">Score: <field name="cqs_score" readonly="1"/>/12</span>
+                                    <span invisible="not cqs_score_completed">Score: <field name="cqs_score" readonly="1"/>/12</span>
                                     <span invisible="cqs_score_completed" class="text-muted">Score: Incomplete</span>
                                 </div>
                             </div>
@@ -92,7 +92,7 @@
                     <div class="cqs-card">
                         <div class="cqs-card-header">
                             <span>B. Qualification questions (score each 0, 1 or 2)</span>
-                            <span class="badge bg-light text-dark">
+                            <span class="cqs-card-header-badge">
                                 Total Score: <field name="cqs_score" readonly="1"/> / 12
                             </span>
                         </div>
@@ -196,12 +196,12 @@
                                             <span class="text-muted" invisible="cqs_score_competition != '-'">-</span>
                                         </td>
                                     </tr>
-                                    <tr class="table-light fw-bold">
+                                    <tr class="cqs-total-row">
                                         <td colspan="2" class="text-end align-middle fs-6">
                                             Total Score:
                                         </td>
                                         <td class="text-center align-middle">
-                                            <span class="fs-5 text-primary fw-bold">
+                                            <span class="fs-5 cqs-title fw-bold">
                                                 <field name="cqs_score" readonly="1"/> / 12
                                             </span>
                                         </td>
@@ -220,7 +220,7 @@
                         <div class="table-responsive">
                             <table class="table table-bordered mb-0">
                                 <thead>
-                                    <tr class="table-secondary">
+                                    <tr class="cqs-table-subhead">
                                         <th style="width: 15%;">Score</th>
                                         <th style="width: 25%;">Result</th>
                                         <th style="width: 60%;">Action</th>
@@ -293,10 +293,10 @@
                         <div class="cqs-card-header">
                             <span>D. Give-to-get: at least one before any visit</span>
                             <div>
-                                <span class="badge bg-success" invisible="not cqs_g2g_received">
+                                <span class="cqs-badge-received" invisible="not cqs_g2g_received">
                                     <i class="fa fa-check me-1"/> Commitment Received
                                 </span>
-                                <span class="badge bg-warning text-dark" invisible="cqs_g2g_received">
+                                <span class="cqs-badge-awaiting" invisible="cqs_g2g_received">
                                     <i class="fa fa-clock-o me-1"/> Awaiting Commitment
                                 </span>
                             </div>
@@ -304,7 +304,7 @@
                         <div class="table-responsive">
                             <table class="table table-bordered mb-0">
                                 <thead>
-                                    <tr class="table-secondary">
+                                    <tr class="cqs-table-subhead">
                                         <th style="width: 50%;">Client commitment</th>
                                         <th style="width: 15%; text-align: center;">Received</th>
                                         <th style="width: 35%;">Date / note</th>
@@ -365,13 +365,13 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="p-2 bg-light border-bottom text-muted small">
+                        <div class="cqs-subnote">
                             <em>Two missed signals in a row move the lead to nurture. The 25-day sales-cycle ceiling (SOP-SAL-11) still applies.</em>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered mb-0">
                                 <thead>
-                                    <tr class="table-secondary">
+                                    <tr class="cqs-table-subhead">
                                         <th style="width: 45%;">Signal</th>
                                         <th style="width: 25%; text-align: center;">Status (Yes / No)</th>
                                         <th style="width: 30%;">Date</th>
@@ -472,7 +472,7 @@
                     <span class="badge rounded-pill text-bg-success" t-if="record.cqs_score_completed.raw_value and record.cqs_score.raw_value &gt;= 9" title="CQS Qualified (9–12)">
                         <i class="fa fa-check-circle me-1"/> CQS: <field name="cqs_score"/>/12
                     </span>
-                    <span class="badge rounded-pill text-bg-warning text-dark" t-if="record.cqs_score_completed.raw_value and record.cqs_score.raw_value &gt;= 5 and record.cqs_score.raw_value &lt; 9" title="CQS Unclear Need (5–8)">
+                    <span class="badge rounded-pill cqs-kanban-warning" t-if="record.cqs_score_completed.raw_value and record.cqs_score.raw_value &gt;= 5 and record.cqs_score.raw_value &lt; 9" title="CQS Unclear Need (5–8)">
                         <i class="fa fa-question-circle me-1"/> CQS: <field name="cqs_score"/>/12
                     </span>
                     <span class="badge rounded-pill text-bg-danger" t-if="record.cqs_score_completed.raw_value and record.cqs_score.raw_value &lt; 5" title="CQS Window Shopper (0–4)">

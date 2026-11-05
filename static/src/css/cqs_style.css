@@ -1,18 +1,35 @@
-/* CQS Scorecard Styling - FRM-SAL-01 */
+/* =========================================================================
+   CQS Scorecard Styling - FRM-SAL-01
+   Theme-Adaptive: Fully compatible with Light, Dark, Black, and Custom Themes
+   ========================================================================= */
 
-.cqs-card {
-    border: 1px solid #dcdfe6;
+/* Header summary banner */
+.cqs-header-banner {
+    background-color: rgba(113, 75, 103, 0.08);
+    border: 1px solid rgba(113, 75, 103, 0.25);
     border-radius: 8px;
-    background-color: #ffffff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 0.85rem 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.cqs-header-banner .cqs-title {
+    color: #714B67;
+}
+
+/* Card container - strictly transparent so it inherits native Odoo sheet background */
+.cqs-card {
+    border: 1px solid rgba(120, 120, 120, 0.25) !important;
+    border-radius: 8px;
+    background-color: transparent !important;
+    background: transparent !important;
     margin-bottom: 1.25rem;
     overflow: hidden;
 }
 
 .cqs-card-header {
-    background-color: #714B67;
-    color: #ffffff;
-    padding: 0.6rem 1rem;
+    background-color: #714B67 !important;
+    color: #ffffff !important;
+    padding: 0.65rem 1rem;
     font-weight: 600;
     font-size: 0.95rem;
     display: flex;
@@ -20,101 +37,293 @@
     justify-content: space-between;
 }
 
-.cqs-card-body {
-    padding: 1rem;
+.cqs-card-header-badge {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
 }
 
+.cqs-card-body {
+    padding: 1.25rem 1rem;
+    background-color: transparent !important;
+    background: transparent !important;
+    color: inherit !important;
+}
+
+/* Ensure all labels, groups, and inputs in Section A and F inherit and display clearly */
+.cqs-card-body label,
+.cqs-card-body .o_form_label {
+    color: inherit !important;
+    font-weight: 500;
+}
+
+.cqs-card-body .o_field_widget {
+    color: inherit !important;
+}
+
+.cqs-card-body .o_group .o_td_label {
+    border-right: none !important;
+}
+
+/* Textarea in Section F (Client's Own Words) */
+.cqs-card-body textarea.o_input,
+.cqs-card-body .o_field_text textarea {
+    background-color: rgba(120, 120, 120, 0.08) !important;
+    color: inherit !important;
+    border: 1px solid rgba(120, 120, 120, 0.3) !important;
+    border-radius: 6px;
+    padding: 0.65rem 0.85rem;
+}
+
+.cqs-card-body textarea.o_input:focus,
+.cqs-card-body .o_field_text textarea:focus {
+    border-color: #714B67 !important;
+    box-shadow: 0 0 0 0.2rem rgba(113, 75, 103, 0.25) !important;
+}
+
+/* Section F group headers ("Signed Paper Scorecard", "Sign-off & Review") */
+.cqs-card-body .o_horizontal_separator {
+    color: inherit !important;
+    font-weight: 700 !important;
+    border-bottom: 1px solid rgba(120, 120, 120, 0.25) !important;
+    margin-bottom: 1rem !important;
+    padding-bottom: 0.35rem !important;
+}
+
+/* Subnote in Section E */
+.cqs-subnote {
+    background-color: rgba(120, 120, 120, 0.06);
+    border-bottom: 1px solid rgba(120, 120, 120, 0.2);
+    padding: 0.5rem 0.85rem;
+    font-size: 0.85rem;
+    color: inherit !important;
+    opacity: 0.85;
+}
+
+/* Tables */
 .cqs-table {
     width: 100%;
     margin-bottom: 0;
     border-collapse: collapse;
+    background-color: transparent !important;
+    color: inherit !important;
 }
 
 .cqs-table th {
-    background-color: #714B67;
-    color: #ffffff;
-    padding: 0.55rem 0.75rem;
+    background-color: #714B67 !important;
+    color: #ffffff !important;
+    padding: 0.65rem 0.85rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: 1px solid #5d3c54 !important;
+}
+
+.cqs-table-subhead th {
+    background-color: rgba(113, 75, 103, 0.12) !important;
+    color: inherit !important;
     font-weight: 600;
     font-size: 0.85rem;
-    border: 1px solid #5d3c54;
+    padding: 0.55rem 0.85rem;
+    border: 1px solid rgba(120, 120, 120, 0.25) !important;
 }
 
 .cqs-table td {
-    padding: 0.6rem 0.75rem;
+    padding: 0.75rem 0.85rem;
     vertical-align: middle;
-    border: 1px solid #dee2e6;
+    border: 1px solid rgba(120, 120, 120, 0.25) !important;
     font-size: 0.875rem;
+    color: inherit !important;
+    background-color: transparent;
 }
 
 .cqs-table tr:nth-child(even) td {
-    background-color: #fbfcfd;
+    background-color: rgba(120, 120, 120, 0.04);
 }
 
 .cqs-question-title {
     font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 0.2rem;
+    color: inherit;
+    margin-bottom: 0.25rem;
 }
 
 .cqs-question-subtitle {
-    font-size: 0.8rem;
-    color: #6c757d;
+    font-size: 0.82rem;
+    opacity: 0.75;
     font-style: italic;
+    color: inherit;
 }
 
-/* Radio button options styling inside table */
-.cqs-radio-group .o_radio_item {
-    margin-bottom: 0.35rem;
-    padding: 0.25rem 0.4rem;
-    border-radius: 4px;
+/* -------------------------------------------------------------------------
+   Section B: Radio Buttons & Generous Padding from Borders
+   ------------------------------------------------------------------------- */
+.cqs-table td.cqs-radio-group {
+    padding: 1rem 1.6rem !important; /* Generous breathing room between table cell borders and radio controls */
+    vertical-align: middle !important;
+}
+
+.cqs-radio-group .o_field_radio {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.65rem !important;
+    margin: 0.25rem 0 !important;
+    padding-left: 0.75rem !important; /* Inset from the left table border */
+}
+
+.cqs-radio-group .o_radio_item,
+.cqs-radio-group .form-check {
+    margin: 0 !important;
+    padding: 0.45rem 0.85rem 0.45rem 2.25rem !important; /* Space for the radio bullet */
+    border-radius: 6px;
     transition: background-color 0.15s ease-in-out;
+    position: relative !important;
+    display: flex !important;
+    align-items: flex-start !important;
 }
 
-.cqs-radio-group .o_radio_item:hover {
-    background-color: #f7f3f6;
+.cqs-radio-group .form-check-input,
+.cqs-radio-group .o_radio_input,
+.cqs-radio-group input[type="radio"] {
+    margin-left: -1.75rem !important;
+    margin-top: 0.2rem !important;
+    cursor: pointer !important;
+    width: 1.15rem !important;
+    height: 1.15rem !important;
+    min-width: 1.15rem !important;
+    flex-shrink: 0 !important;
+    accent-color: #714B67 !important;
 }
 
-/* Section C Routing Decision highlighting */
+.cqs-radio-group .form-check-label,
+.cqs-radio-group .o_form_label,
+.cqs-radio-group label {
+    cursor: pointer !important;
+    margin-bottom: 0 !important;
+    line-height: 1.45 !important;
+    padding-left: 0.35rem !important;
+    color: inherit !important;
+    font-weight: 400 !important;
+}
+
+.cqs-radio-group .o_radio_item:hover,
+.cqs-radio-group .form-check:hover {
+    background-color: rgba(113, 75, 103, 0.09) !important;
+}
+
+/* Total score row in Section B */
+.cqs-total-row td {
+    background-color: rgba(113, 75, 103, 0.1) !important;
+    font-weight: 700;
+    border-top: 2px solid rgba(113, 75, 103, 0.3) !important;
+}
+
+/* -------------------------------------------------------------------------
+   Section C: Routing Decision highlighting
+   ------------------------------------------------------------------------- */
 .cqs-routing-row-qualified {
-    background-color: #e8f5e9 !important;
-    border-left: 4px solid #2e7d32 !important;
+    background-color: rgba(40, 167, 69, 0.15) !important;
+    border-left: 4px solid #28a745 !important;
 }
 
 .cqs-routing-row-unclear {
-    background-color: #fff9db !important;
+    background-color: rgba(245, 159, 0, 0.15) !important;
     border-left: 4px solid #f59f00 !important;
 }
 
 .cqs-routing-row-shopper {
-    background-color: #ffebee !important;
-    border-left: 4px solid #d32f2f !important;
+    background-color: rgba(220, 53, 69, 0.15) !important;
+    border-left: 4px solid #dc3545 !important;
 }
 
-/* Score highlight badge */
-.cqs-total-badge {
-    font-size: 1.15rem;
-    font-weight: 700;
-    padding: 0.4rem 0.8rem;
-    border-radius: 6px;
-    display: inline-block;
+/* -------------------------------------------------------------------------
+   Section D: Commitment Badges (Crystal Clear in Light and Dark mode)
+   ------------------------------------------------------------------------- */
+.cqs-badge-awaiting {
+    background-color: #f59f00 !important;
+    color: #111111 !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    padding: 0.4rem 0.85rem !important;
+    border-radius: 6px !important;
+    border: 1px solid #d97706 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    letter-spacing: 0.01em;
 }
 
-.cqs-badge-qualified {
-    background-color: #28a745;
-    color: #ffffff;
+.cqs-badge-awaiting i {
+    color: #111111 !important;
 }
 
-.cqs-badge-unclear {
-    background-color: #ffc107;
-    color: #212529;
+.cqs-badge-received {
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    padding: 0.4rem 0.85rem !important;
+    border-radius: 6px !important;
+    border: 1px solid #218838 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    letter-spacing: 0.01em;
 }
 
-.cqs-badge-shopper {
-    background-color: #dc3545;
-    color: #ffffff;
+.cqs-badge-received i {
+    color: #ffffff !important;
 }
 
-.cqs-badge-incomplete {
-    background-color: #6c757d;
-    color: #ffffff;
+/* Kanban badge high-contrast warning */
+.cqs-kanban-warning {
+    background-color: #f59f00 !important;
+    color: #111111 !important;
+    font-weight: 600 !important;
+}
+
+/* -------------------------------------------------------------------------
+   Explicit Dark / Black Theme Enhancements
+   ------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+    .cqs-header-banner .cqs-title {
+        color: #d1a8c7 !important;
+    }
+    .cqs-header-banner {
+        border-color: rgba(209, 168, 199, 0.35) !important;
+    }
+    .cqs-table tr:nth-child(even) td {
+        background-color: rgba(255, 255, 255, 0.03) !important;
+    }
+    .cqs-radio-group .o_radio_item:hover,
+    .cqs-radio-group .form-check:hover {
+        background-color: rgba(209, 168, 199, 0.15) !important;
+    }
+}
+
+[data-bs-theme="dark"] .cqs-header-banner .cqs-title,
+[data-color-mode="dark"] .cqs-header-banner .cqs-title,
+.o_dark_mode .cqs-header-banner .cqs-title,
+.dark .cqs-header-banner .cqs-title {
+    color: #d1a8c7 !important;
+}
+
+[data-bs-theme="dark"] .cqs-header-banner,
+[data-color-mode="dark"] .cqs-header-banner,
+.o_dark_mode .cqs-header-banner,
+.dark .cqs-header-banner {
+    border-color: rgba(209, 168, 199, 0.35) !important;
+}
+
+[data-bs-theme="dark"] .cqs-table tr:nth-child(even) td,
+[data-color-mode="dark"] .cqs-table tr:nth-child(even) td,
+.o_dark_mode .cqs-table tr:nth-child(even) td,
+.dark .cqs-table tr:nth-child(even) td {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+[data-bs-theme="dark"] .cqs-radio-group .o_radio_item:hover,
+[data-color-mode="dark"] .cqs-radio-group .o_radio_item:hover,
+.o_dark_mode .cqs-radio-group .o_radio_item:hover,
+.dark .cqs-radio-group .o_radio_item:hover {
+    background-color: rgba(209, 168, 199, 0.15) !important;
 }
