@@ -1,0 +1,120 @@
+/* CQS Scorecard Styling - FRM-SAL-01 */
+
+.cqs-card {
+    border: 1px solid #dcdfe6;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+}
+
+.cqs-card-header {
+    background-color: #714B67;
+    color: #ffffff;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cqs-card-body {
+    padding: 1rem;
+}
+
+.cqs-table {
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: collapse;
+}
+
+.cqs-table th {
+    background-color: #714B67;
+    color: #ffffff;
+    padding: 0.55rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1px solid #5d3c54;
+}
+
+.cqs-table td {
+    padding: 0.6rem 0.75rem;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+    font-size: 0.875rem;
+}
+
+.cqs-table tr:nth-child(even) td {
+    background-color: #fbfcfd;
+}
+
+.cqs-question-title {
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.2rem;
+}
+
+.cqs-question-subtitle {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Radio button options styling inside table */
+.cqs-radio-group .o_radio_item {
+    margin-bottom: 0.35rem;
+    padding: 0.25rem 0.4rem;
+    border-radius: 4px;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.cqs-radio-group .o_radio_item:hover {
+    background-color: #f7f3f6;
+}
+
+/* Section C Routing Decision highlighting */
+.cqs-routing-row-qualified {
+    background-color: #e8f5e9 !important;
+    border-left: 4px solid #2e7d32 !important;
+}
+
+.cqs-routing-row-unclear {
+    background-color: #fff9db !important;
+    border-left: 4px solid #f59f00 !important;
+}
+
+.cqs-routing-row-shopper {
+    background-color: #ffebee !important;
+    border-left: 4px solid #d32f2f !important;
+}
+
+/* Score highlight badge */
+.cqs-total-badge {
+    font-size: 1.15rem;
+    font-weight: 700;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.cqs-badge-qualified {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+.cqs-badge-unclear {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.cqs-badge-shopper {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.cqs-badge-incomplete {
+    background-color: #6c757d;
+    color: #ffffff;
+}

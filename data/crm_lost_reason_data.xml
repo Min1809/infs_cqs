@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="lost_reason_window_shopper" model="crm.lost.reason">
+            <field name="name">Window shopper / no real need</field>
+        </record>
+
+        <record id="lost_reason_no_give_to_get" model="crm.lost.reason">
+            <field name="name">No give-to-get commitment</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit crm.lead form view to add CQS tab -->
+    <record id="crm_lead_view_form_inherit_infs_cqs" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.infs.cqs</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Qualification" name="cqs_qualification">
+                    <!-- Warning Banner: Missed Signals >= 2 -->
+                    <div class="alert alert-warning d-flex align-items-center mb-3" role="alert" invisible="cqs_missed_signals &lt; 2">
+                        <i class="fa fa-exclamation-triangle fa-2x me-3 text-warning"/>
+                        <div>
+                            <h5 class="alert-heading mb-1 fw-bold">Move to Nurture Warning</h5>
+                            <div>Two or more missed follow-up signals recorded (<field name="cqs_missed_signals" readonly="1" class="fw-bold"/> missed). The 25-day sales-cycle ceiling (SOP-SAL-11) applies. Move the lead to nurture.</div>
+                        </div>
+                    </div>
+
+                    <!-- Scorecard Header Banner -->
+                    <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-light rounded border">
+                        <div>
+                            <h4 class="mb-0 fw-bold text-primary">Client Qualification Scorecard</h4>
+                            <small class="text-muted">FRM-SAL-01 | Version 1.0 | Linked to SOP-SAL-01 and SOP-SAL-10</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="text-end">
+                                <div class="text-muted small">Score &amp; Status</div>
+                                <div class="fw-bold fs-5">
+                                    <span invisible="not cqs_score_completed" class="text-dark">Score: <field name="cqs_score" readonly="1"/>/12</span>
+                                    <span invisible="cqs_score_completed" class="text-muted">Score: Incomplete</span>
+                                </div>
+                            </div>
+                            <field name="cqs_result" widget="badge"
+                                   decoration-success="cqs_result == 'qualified'"
+                                   decoration-warning="cqs_result == 'unclear'"
+                                   decoration-danger="cqs_result == 'shopper'"
+                                   decoration-muted="cqs_result == 'incomplete'"/>
+                        </div>
+                    </div>
+
+                    <!-- Screening Not Passed Archive Banner -->
+                    <div class="alert alert-danger d-flex justify-content-between align-items-center mb-3" role="alert" invisible="not cqs_can_archive">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-ban fa-2x me-3 text-danger"/>
+                            <div>
+                                <h5 class="alert-heading mb-1 fw-bold">Screening Not Passed</h5>
+                                <div>This opportunity has not passed client screening (FRM-SAL-01). You can archive it now.</div>
+                            </div>
+                        </div>
+                        <button name="action_archive_unpassed_cqs" type="object"
+                                string="Archive Opportunity"
+                                class="btn btn-danger"
+                                icon="fa-archive"
+                                confirm="This opportunity has not passed client screening. The system will archive it now because it has not passed. Are you sure you want to proceed?"/>
+                    </div>
+
+                    <!-- Hidden fields required for conditional visibility -->
+                    <field name="cqs_score_completed" invisible="1"/>
+                    <field name="cqs_g2g_received" invisible="1"/>
+                    <field name="cqs_missed_signals" invisible="1"/>
+                    <field name="cqs_can_archive" invisible="1"/>
+
+                    <!-- SECTION A: Call details -->
+                    <div class="cqs-card">
+                        <div class="cqs-card-header">
+                            <span>A. Call details</span>
+                        </div>
+                        <div class="cqs-card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <group>
+                                        <field name="partner_id" string="Client Company" readonly="1"/>
+                                        <field name="cqs_bdc_id" options="{'no_create': True}"/>
+                                        <field name="cqs_contact_person"/>
+                                        <field name="cqs_lane" widget="radio" options="{'horizontal': true}"/>
+                                    </group>
+                                </div>
+                                <div class="col-md-6">
+                                    <group>
+                                        <field name="cqs_call_date"/>
+                                        <field name="cqs_lead_source" placeholder="e.g. Inbound Website, Referral, Outbound..."/>
+                                        <field name="cqs_opportunity_ref"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION B: Qualification questions -->
+                    <div class="cqs-card">
+                        <div class="cqs-card-header">
+                            <span>B. Qualification questions (score each 0, 1 or 2)</span>
+                            <span class="badge bg-light text-dark">
+                                Total Score: <field name="cqs_score" readonly="1"/> / 12
+                            </span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered cqs-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 28%;">Criterion and question</th>
+                                        <th style="width: 62%;">Score &amp; Option Options (0, 1, or 2 points)</th>
+                                        <th style="width: 10%; text-align: center;">Selected Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="cqs-question-title">1. Timing</div>
+                                            <div class="cqs-question-subtitle">Why is now the right time to look at this? (inbound or outbound)</div>
+                                        </td>
+                                        <td class="cqs-radio-group">
+                                            <field name="cqs_timing" widget="radio"/>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <span class="badge rounded-pill text-bg-secondary fs-6" invisible="cqs_score_timing == '-'">
+                                                <field name="cqs_score_timing" readonly="1"/>
+                                            </span>
+                                            <span class="text-muted" invisible="cqs_score_timing != '-'">-</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="cqs-question-title">2. Pain</div>
+                                            <div class="cqs-question-subtitle">What does this problem cost you today in time, money or risk?</div>
+                                        </td>
+                                        <td class="cqs-radio-group">
+                                            <field name="cqs_pain" widget="radio"/>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <span class="badge rounded-pill text-bg-secondary fs-6" invisible="cqs_score_pain == '-'">
+                                                <field name="cqs_score_pain" readonly="1"/>
+                                            </span>
+                                            <span class="text-muted" invisible="cqs_score_pain != '-'">-</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="cqs-question-title">3. Deadline</div>
+                                            <div class="cqs-question-subtitle">By when must this be solved, and what happens if it isn't?</div>
+                                        </td>
+                                        <td class="cqs-radio-group">
+                                            <field name="cqs_deadline" widget="radio"/>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <span class="badge rounded-pill text-bg-secondary fs-6" invisible="cqs_score_deadline == '-'">
+                                                <field name="cqs_score_deadline" readonly="1"/>
+                                            </span>
+                                            <span class="text-muted" invisible="cqs_score_deadline != '-'">-</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="cqs-question-title">4. Budget</div>
+                                            <div class="cqs-question-subtitle">Has budget been allocated, or are you building the budget?</div>
+                                        </td>
+                                        <td class="cqs-radio-group">
+                                            <field name="cqs_budget" widget="radio"/>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <span class="badge rounded-pill text-bg-secondary fs-6" invisible="cqs_score_budget == '-'">
+                                                <field name="cqs_score_budget" readonly="1"/>
+                                            </span>
+                                            <span class="text-muted" invisible="cqs_score_budget != '-'">-</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="cqs-question-title">5. Decision</div>
+                                            <div class="cqs-question-subtitle">Who besides you decides? Can they join our meeting?</div>
+                                        </td>
+                                        <td class="cqs-radio-group">
+                                            <field name="cqs_decision" widget="radio"/>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <span class="badge rounded-pill text-bg-secondary fs-6" invisible="cqs_score_decision == '-'">
+                                                <field name="cqs_score_decision" readonly="1"/>
+                                            </span>
+                                            <span class="text-muted" invisible="cqs_score_decision != '-'">-</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="cqs-question-title">6. Competition</div>
+                                            <div class="cqs-question-subtitle">Who else are you talking to, and why did you include us?</div>
+                                        </td>
+                                        <td class="cqs-radio-group">
+                                            <field name="cqs_competition" widget="radio"/>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <span class="badge rounded-pill text-bg-secondary fs-6" invisible="cqs_score_competition == '-'">
+                                                <field name="cqs_score_competition" readonly="1"/>
+                                            </span>
+                                            <span class="text-muted" invisible="cqs_score_competition != '-'">-</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="table-light fw-bold">
+                                        <td colspan="2" class="text-end align-middle fs-6">
+                                            Total Score:
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <span class="fs-5 text-primary fw-bold">
+                                                <field name="cqs_score" readonly="1"/> / 12
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECTION C: Routing decision -->
+                    <div class="cqs-card">
+                        <div class="cqs-card-header">
+                            <span>C. Routing decision (tick one)</span>
+                            <span class="small text-white-50">Auto-computed from Section B Total Score</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr class="table-secondary">
+                                        <th style="width: 15%;">Score</th>
+                                        <th style="width: 25%;">Result</th>
+                                        <th style="width: 60%;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr invisible="cqs_result != 'qualified'" class="cqs-routing-row-qualified">
+                                        <td class="fw-bold align-middle">9 – 12</td>
+                                        <td class="align-middle">
+                                            <i class="fa fa-check-square text-success me-1"/> <strong>Qualified</strong>
+                                        </td>
+                                        <td>
+                                            Book the visit once at least one give-to-get commitment (section D) is received. File the PQM Trigger Form after the visit.
+                                        </td>
+                                    </tr>
+                                    <tr invisible="cqs_result == 'qualified'" class="text-muted">
+                                        <td class="align-middle">9 – 12</td>
+                                        <td class="align-middle">
+                                            <i class="fa fa-square-o me-1"/> Qualified
+                                        </td>
+                                        <td>
+                                            Book the visit once at least one give-to-get commitment (section D) is received. File the PQM Trigger Form after the visit.
+                                        </td>
+                                    </tr>
+
+                                    <tr invisible="cqs_result != 'unclear'" class="cqs-routing-row-unclear">
+                                        <td class="fw-bold align-middle">5 – 8</td>
+                                        <td class="align-middle">
+                                            <i class="fa fa-check-square text-warning me-1"/> <strong>Unclear need</strong>
+                                        </td>
+                                        <td>
+                                            No free visit. Offer a paid diagnostic: IT Health Check (Lane 1), 2-week ERP pre-assessment (Lane 2), brand audit (Lane 3) or AI-readiness assessment (Lane 4). Fee deducted if the client orders.
+                                        </td>
+                                    </tr>
+                                    <tr invisible="cqs_result == 'unclear'" class="text-muted">
+                                        <td class="align-middle">5 – 8</td>
+                                        <td class="align-middle">
+                                            <i class="fa fa-square-o me-1"/> Unclear need
+                                        </td>
+                                        <td>
+                                            No free visit. Offer a paid diagnostic: IT Health Check (Lane 1), 2-week ERP pre-assessment (Lane 2), brand audit (Lane 3) or AI-readiness assessment (Lane 4). Fee deducted if the client orders.
+                                        </td>
+                                    </tr>
+
+                                    <tr invisible="cqs_result != 'shopper'" class="cqs-routing-row-shopper">
+                                        <td class="fw-bold align-middle">0 – 4</td>
+                                        <td class="align-middle">
+                                            <i class="fa fa-check-square text-danger me-1"/> <strong>Window shopper</strong>
+                                        </td>
+                                        <td>
+                                            No visit. Send a budgetary estimate by email that lists the open questions the client must answer for a detailed quotation. Move the lead to nurture.
+                                        </td>
+                                    </tr>
+                                    <tr invisible="cqs_result == 'shopper'" class="text-muted">
+                                        <td class="align-middle">0 – 4</td>
+                                        <td class="align-middle">
+                                            <i class="fa fa-square-o me-1"/> Window shopper
+                                        </td>
+                                        <td>
+                                            No visit. Send a budgetary estimate by email that lists the open questions the client must answer for a detailed quotation. Move the lead to nurture.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECTION D: Give-to-get -->
+                    <div class="cqs-card">
+                        <div class="cqs-card-header">
+                            <span>D. Give-to-get: at least one before any visit</span>
+                            <div>
+                                <span class="badge bg-success" invisible="not cqs_g2g_received">
+                                    <i class="fa fa-check me-1"/> Commitment Received
+                                </span>
+                                <span class="badge bg-warning text-dark" invisible="cqs_g2g_received">
+                                    <i class="fa fa-clock-o me-1"/> Awaiting Commitment
+                                </span>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr class="table-secondary">
+                                        <th style="width: 50%;">Client commitment</th>
+                                        <th style="width: 15%; text-align: center;">Received</th>
+                                        <th style="width: 35%;">Date / note</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Decision maker attends the first meeting</td>
+                                        <td class="text-center align-middle">
+                                            <field name="cqs_g2g_decision_maker"/>
+                                        </td>
+                                        <td>
+                                            <field name="cqs_g2g_decision_maker_note" placeholder="Date or note..."/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Information sent in advance (user/site counts, network diagram, current systems, sample reports)</td>
+                                        <td class="text-center align-middle">
+                                            <field name="cqs_g2g_info_sent"/>
+                                        </td>
+                                        <td>
+                                            <field name="cqs_g2g_info_sent_note" placeholder="Date or note..."/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pre-meeting questionnaire completed</td>
+                                        <td class="text-center align-middle">
+                                            <field name="cqs_g2g_questionnaire"/>
+                                        </td>
+                                        <td>
+                                            <field name="cqs_g2g_questionnaire_note" placeholder="Date or note..."/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Paid diagnostic agreed (IT Health Check, ERP pre-assessment, brand audit, AI-readiness)</td>
+                                        <td class="text-center align-middle">
+                                            <field name="cqs_g2g_paid_diagnostic"/>
+                                        </td>
+                                        <td>
+                                            <field name="cqs_g2g_paid_diagnostic_note" placeholder="Date or note..."/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECTION E: Follow-up signals -->
+                    <div class="cqs-card">
+                        <div class="cqs-card-header">
+                            <span>E. Follow-up signals: judge actions, not words</span>
+                            <div>
+                                <span class="badge bg-danger" invisible="cqs_missed_signals &lt; 2">
+                                    <field name="cqs_missed_signals" readonly="1"/> Missed Signals (Move to Nurture)
+                                </span>
+                                <span class="badge bg-secondary" invisible="cqs_missed_signals &gt;= 2">
+                                    <field name="cqs_missed_signals" readonly="1"/> Missed Signals
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-2 bg-light border-bottom text-muted small">
+                            <em>Two missed signals in a row move the lead to nurture. The 25-day sales-cycle ceiling (SOP-SAL-11) still applies.</em>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr class="table-secondary">
+                                        <th style="width: 45%;">Signal</th>
+                                        <th style="width: 25%; text-align: center;">Status (Yes / No)</th>
+                                        <th style="width: 30%;">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Replied to our follow-up within 48 hours</td>
+                                        <td class="text-center">
+                                            <field name="cqs_signal_reply" widget="radio" options="{'horizontal': true}"/>
+                                        </td>
+                                        <td>
+                                            <field name="cqs_signal_reply_date"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sent the information we requested</td>
+                                        <td class="text-center">
+                                            <field name="cqs_signal_info" widget="radio" options="{'horizontal': true}"/>
+                                        </td>
+                                        <td>
+                                            <field name="cqs_signal_info_date"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Brought the right people to the meeting</td>
+                                        <td class="text-center">
+                                            <field name="cqs_signal_people" widget="radio" options="{'horizontal': true}"/>
+                                        </td>
+                                        <td>
+                                            <field name="cqs_signal_people_date"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Agreed a date for the next step</td>
+                                        <td class="text-center">
+                                            <field name="cqs_signal_next_step" widget="radio" options="{'horizontal': true}"/>
+                                        </td>
+                                        <td>
+                                            <field name="cqs_signal_next_step_date"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECTION F: Client's own words & Attachments -->
+                    <div class="cqs-card">
+                        <div class="cqs-card-header">
+                            <span>F. Client's own words (key answers, pain points, names) &amp; Verification</span>
+                        </div>
+                        <div class="cqs-card-body">
+                            <div class="mb-3">
+                                <field name="cqs_client_words" placeholder="Record direct client quotes, specific pain points, software in use, key stakeholder names and objections..."/>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <group string="Signed Paper Scorecard (FRM-SAL-01)">
+                                        <field name="cqs_scorecard_attachment" filename="cqs_scorecard_attachment_name"/>
+                                        <field name="cqs_scorecard_attachment_name" invisible="1"/>
+                                    </group>
+                                </div>
+                                <div class="col-md-6">
+                                    <group string="Sign-off &amp; Review">
+                                        <field name="cqs_bdc_signed"/>
+                                        <field name="cqs_bdc_sign_date" invisible="not cqs_bdc_signed"/>
+                                        <field name="cqs_reviewed_by_sales_head"/>
+                                        <field name="cqs_sales_head_review_date" invisible="not cqs_reviewed_by_sales_head"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit crm.lead kanban view to show CQS Score badge -->
+    <record id="crm_lead_kanban_view_inherit_infs_cqs" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.inherit.infs.cqs</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="priority">25</field>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="inside">
+                <field name="cqs_score"/>
+                <field name="cqs_score_completed"/>
+                <field name="cqs_result"/>
+                <field name="cqs_lane"/>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']/parent::div" position="after">
+                <div class="d-flex flex-wrap gap-1 mt-1 mb-1" t-if="record.cqs_score_completed.raw_value or record.cqs_lane.raw_value">
+                    <span class="badge rounded-pill text-bg-info text-white" t-if="record.cqs_lane.raw_value">
+                        <field name="cqs_lane"/>
+                    </span>
+                    <span class="badge rounded-pill text-bg-success" t-if="record.cqs_score_completed.raw_value and record.cqs_score.raw_value &gt;= 9" title="CQS Qualified (9–12)">
+                        <i class="fa fa-check-circle me-1"/> CQS: <field name="cqs_score"/>/12
+                    </span>
+                    <span class="badge rounded-pill text-bg-warning text-dark" t-if="record.cqs_score_completed.raw_value and record.cqs_score.raw_value &gt;= 5 and record.cqs_score.raw_value &lt; 9" title="CQS Unclear Need (5–8)">
+                        <i class="fa fa-question-circle me-1"/> CQS: <field name="cqs_score"/>/12
+                    </span>
+                    <span class="badge rounded-pill text-bg-danger" t-if="record.cqs_score_completed.raw_value and record.cqs_score.raw_value &lt; 5" title="CQS Window Shopper (0–4)">
+                        <i class="fa fa-times-circle me-1"/> CQS: <field name="cqs_score"/>/12
+                    </span>
+                    <span class="badge rounded-pill text-bg-secondary" t-if="!record.cqs_score_completed.raw_value" title="CQS Score Missing / Incomplete">
+                        <i class="fa fa-hourglass-half me-1"/> CQS: Missing
+                    </span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

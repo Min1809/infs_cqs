@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- CQS Pivot View for Thursday PQM Review -->
+    <record id="crm_lead_view_pivot_cqs" model="ir.ui.view">
+        <field name="name">crm.lead.view.pivot.cqs</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <pivot string="PQM Qualification Review (CQS)" sample="1">
+                <field name="user_id" type="row"/>
+                <field name="cqs_lane" type="col"/>
+                <field name="cqs_score" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- CQS Graph View -->
+    <record id="crm_lead_view_graph_cqs" model="ir.ui.view">
+        <field name="name">crm.lead.view.graph.cqs</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <graph string="PQM Qualification Review (CQS)" type="bar" sample="1">
+                <field name="user_id"/>
+                <field name="cqs_lane"/>
+                <field name="cqs_score" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Window Action for PQM Qualification Review -->
+    <record id="action_crm_lead_cqs_report" model="ir.actions.act_window">
+        <field name="name">PQM Qualification Review (CQS)</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">pivot,graph,tree,form</field>
+        <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="context">{
+            'pivot_measures': ['cqs_score:avg', '__count'],
+            'pivot_row_groupby': ['user_id'],
+            'pivot_column_groupby': ['cqs_lane']
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No scored opportunities found for PQM review.
+            </p>
+            <p>
+                Complete the FRM-SAL-01 qualification scorecard on opportunities to analyze average scores and volume by salesperson and lane.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_crm_lead_cqs_report_pivot" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">pivot</field>
+        <field name="view_id" ref="crm_lead_view_pivot_cqs"/>
+        <field name="act_window_id" ref="action_crm_lead_cqs_report"/>
+    </record>
+
+    <record id="action_crm_lead_cqs_report_graph" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="crm_lead_view_graph_cqs"/>
+        <field name="act_window_id" ref="action_crm_lead_cqs_report"/>
+    </record>
+</odoo>

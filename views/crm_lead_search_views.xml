@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit crm.lead search view to add CQS filters -->
+    <record id="crm_lead_view_search_inherit_infs_cqs" model="ir.ui.view">
+        <field name="name">crm.lead.search.inherit.infs.cqs</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='assigned_to_me']" position="after">
+                <separator/>
+                <filter string="CQS Qualified (9–12)" name="filter_cqs_qualified" domain="[('cqs_result', '=', 'qualified')]"/>
+                <filter string="CQS Unclear Need (5–8)" name="filter_cqs_unclear" domain="[('cqs_result', '=', 'unclear')]"/>
+                <filter string="CQS Window Shopper (0–4)" name="filter_cqs_shopper" domain="[('cqs_result', '=', 'shopper')]"/>
+                <filter string="CQS Score Missing" name="filter_cqs_score_missing" domain="[('cqs_score_completed', '=', False)]"/>
+                <separator/>
+                <filter string="Give-to-get Received" name="filter_cqs_g2g_received" domain="[('cqs_g2g_received', '=', True)]"/>
+                <filter string="Missed Signals &gt;= 2" name="filter_cqs_missed_signals" domain="[('cqs_missed_signals', '&gt;=', 2)]"/>
+            </xpath>
+
+            <xpath expr="//group" position="inside">
+                <filter string="CQS Result" name="group_cqs_result" context="{'group_by': 'cqs_result'}"/>
+                <filter string="CQS Lane" name="group_cqs_lane" context="{'group_by': 'cqs_lane'}"/>
+                <filter string="CQS BDC" name="group_cqs_bdc" context="{'group_by': 'cqs_bdc_id'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
