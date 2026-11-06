@@ -73,7 +73,13 @@ This module implements the **FRM-SAL-01 Client Qualification Scorecard** directl
   - Leads can move in and out freely with **no restriction**.
 
 ### Pass Condition:
-$$\text{Passed} = (\text{Result} = \text{'qualified'} \land \text{Give-to-get Received} = \text{True}) \lor (\text{Paid Diagnostic Agreed} = \text{True})$$
+An opportunity satisfies the screening gate and can advance if **ANY** of the following is true:
+1. **$(\text{Result} = \text{'qualified'} \land \text{Give-to-get Received} = \text{True})$**
+2. **$\text{Paid Diagnostic Agreed} = \text{True}$**
+3. **$\text{Existing Customer with Previous Sales Orders} = \text{True}$**:
+   - The commercial partner has at least one previous confirmed sales order (`state in ('sale', 'done')`).
+   - Sales orders originating directly from the current opportunity are excluded.
+   - The lead displays an **Existing Customer — Gate Exempt** badge and banner, allowing free movement across stages.
 
 ### Block & Override Behavior:
 * **Standard User (Non-Admin)**:

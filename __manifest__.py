@@ -57,6 +57,7 @@ Key Features:
     "license": "LGPL-3",
     "depends": [
         "crm",
+        "sale_crm",
         "mail",
     ],
     "data": [

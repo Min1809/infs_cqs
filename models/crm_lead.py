@@ -243,8 +243,47 @@ class CrmLead(models.Model):
     cqs_sales_head_review_date = fields.Date(string="Head of Sales Review Date")
 
     # -------------------------------------------------------------------------
+    # EXISTING CUSTOMER EXEMPTION
+    # -------------------------------------------------------------------------
+    cqs_is_existing_customer = fields.Boolean(
+        string="Is Existing Customer",
+        compute="_compute_cqs_existing_customer",
+        help="True if the commercial partner has previous confirmed sales orders (state in 'sale' or 'done')."
+    )
+    cqs_previous_so_count = fields.Integer(
+        string="Previous Confirmed Orders",
+        compute="_compute_cqs_existing_customer",
+        help="Number of previous confirmed sales orders for this commercial partner (excluding this opportunity)."
+    )
+
+    # -------------------------------------------------------------------------
     # COMPUTED METHODS & CONSTRAINTS
     # -------------------------------------------------------------------------
+    @api.depends('partner_id', 'partner_id.commercial_partner_id')
+    def _compute_cqs_existing_customer(self):
+        sale_order_model = self.env['sale.order']
+        has_opp_field = 'opportunity_id' in sale_order_model._fields
+
+        for lead in self:
+            partner = lead.partner_id
+            if not partner:
+                lead.cqs_is_existing_customer = False
+                lead.cqs_previous_so_count = 0
+                continue
+
+            commercial_partner = partner.commercial_partner_id or partner
+            domain = [
+                ('partner_id', 'child_of', commercial_partner.id),
+                ('state', 'in', ('sale', 'done')),
+            ]
+            # Exclude orders generated from this specific opportunity
+            if lead.id and has_opp_field:
+                domain.append(('opportunity_id', '!=', lead.id))
+
+            so_count = sale_order_model.search_count(domain)
+            lead.cqs_previous_so_count = so_count
+            lead.cqs_is_existing_customer = (so_count > 0)
+
     @api.depends('partner_id', 'partner_id.name')
     def _compute_cqs_contact_person(self):
         for lead in self:
@@ -342,7 +381,7 @@ class CrmLead(models.Model):
             if has_any_score and not lead.cqs_call_date:
                 raise ValidationError("Qualification Call Date (Section A) is required before qualification scorecard answers can be saved.")
 
-    @api.depends('active', 'cqs_score_completed', 'cqs_result', 'cqs_g2g_received', 'cqs_g2g_paid_diagnostic')
+    @api.depends('active', 'cqs_score_completed', 'cqs_result', 'cqs_g2g_received', 'cqs_g2g_paid_diagnostic', 'cqs_is_existing_customer')
     def _compute_cqs_can_archive(self):
         for lead in self:
             lead.cqs_can_archive = bool(
@@ -354,13 +393,18 @@ class CrmLead(models.Model):
     # -------------------------------------------------------------------------
     def _check_cqs_passed(self):
         """Check whether lead satisfies the qualification screening gate:
-        (Result = Qualified AND Give-to-get Received = True) OR Paid diagnostic agreed = True
+        1. (Result = Qualified AND Give-to-get Received = True)
+        OR
+        2. Paid diagnostic agreed = True
+        OR
+        3. Existing customer with previous confirmed sales orders (state in 'sale' or 'done')
         """
         self.ensure_one()
         is_qualified = (self.cqs_result == 'qualified')
         g2g_received = bool(self.cqs_g2g_received)
         paid_diagnostic = bool(self.cqs_g2g_paid_diagnostic)
-        return (is_qualified and g2g_received) or paid_diagnostic
+        is_existing_customer = bool(self.cqs_is_existing_customer)
+        return (is_qualified and g2g_received) or paid_diagnostic or is_existing_customer
 
     def action_archive_unpassed_cqs(self):
         """Archive unqualified opportunity with lost reason and log in chatter."""

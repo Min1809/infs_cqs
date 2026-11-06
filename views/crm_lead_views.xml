@@ -18,6 +18,15 @@
                         </div>
                     </div>
 
+                    <!-- Informational Banner: Existing Customer Gate Exemption -->
+                    <div class="alert alert-info d-flex align-items-center mb-3" role="alert" invisible="not cqs_is_existing_customer">
+                        <i class="fa fa-handshake-o fa-2x me-3 text-info"/>
+                        <div>
+                            <h5 class="alert-heading mb-1 fw-bold">Existing Customer - Stage Gate Exempt</h5>
+                            <div>This client has <field name="cqs_previous_so_count" readonly="1" class="fw-bold"/> previous confirmed sales order(s). As an established customer, this opportunity can advance across stages without CQS screening restrictions.</div>
+                        </div>
+                    </div>
+
                     <!-- Scorecard Header Banner -->
                     <div class="d-flex justify-content-between align-items-center cqs-header-banner">
                         <div>
@@ -25,6 +34,10 @@
                             <small class="text-muted">FRM-SAL-01 | Version 1.0 | Linked to SOP-SAL-01 and SOP-SAL-10</small>
                         </div>
                         <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-info text-white py-2 px-3 fs-6" invisible="not cqs_is_existing_customer"
+                                  title="Existing customer with confirmed previous sales orders. Exempt from CQS stage gating restrictions.">
+                                <i class="fa fa-handshake-o me-1"/> Existing Customer (<field name="cqs_previous_so_count" readonly="1"/> SO)
+                            </span>
                             <div class="text-end">
                                 <div class="text-muted small">Score &amp; Status</div>
                                 <div class="fw-bold fs-5">
@@ -61,6 +74,8 @@
                     <field name="cqs_g2g_received" invisible="1"/>
                     <field name="cqs_missed_signals" invisible="1"/>
                     <field name="cqs_can_archive" invisible="1"/>
+                    <field name="cqs_is_existing_customer" invisible="1"/>
+                    <field name="cqs_previous_so_count" invisible="1"/>
 
                     <!-- SECTION A: Call details -->
                     <div class="cqs-card">
@@ -463,9 +478,14 @@
                 <field name="cqs_score_completed"/>
                 <field name="cqs_result"/>
                 <field name="cqs_lane"/>
+                <field name="cqs_is_existing_customer"/>
+                <field name="cqs_previous_so_count"/>
             </xpath>
             <xpath expr="//field[@name='tag_ids']/parent::div" position="after">
-                <div class="d-flex flex-wrap gap-1 mt-1 mb-1" t-if="record.cqs_score_completed.raw_value or record.cqs_lane.raw_value">
+                <div class="d-flex flex-wrap gap-1 mt-1 mb-1" t-if="record.cqs_score_completed.raw_value or record.cqs_lane.raw_value or record.cqs_is_existing_customer.raw_value">
+                    <span class="badge rounded-pill text-bg-primary" t-if="record.cqs_is_existing_customer.raw_value" title="Existing Customer with Previous Sales Orders">
+                        <i class="fa fa-handshake-o me-1"/> Existing Client
+                    </span>
                     <span class="badge rounded-pill text-bg-info text-white" t-if="record.cqs_lane.raw_value">
                         <field name="cqs_lane"/>
                     </span>

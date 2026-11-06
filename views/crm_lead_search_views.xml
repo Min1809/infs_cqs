@@ -15,6 +15,8 @@
                 <separator/>
                 <filter string="Give-to-get Received" name="filter_cqs_g2g_received" domain="[('cqs_g2g_received', '=', True)]"/>
                 <filter string="Missed Signals &gt;= 2" name="filter_cqs_missed_signals" domain="[('cqs_missed_signals', '&gt;=', 2)]"/>
+                <separator/>
+                <filter string="Existing Customers (Gate Exempt)" name="filter_cqs_existing_customer" domain="[('partner_id.sale_order_count', '&gt;', 0)]"/>
             </xpath>
 
             <xpath expr="//group" position="inside">
